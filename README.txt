@@ -1,1 +1,1 @@
-src -> General.java -> edit ANIME_FILE_PATH & LOG_FILE_PATH
+Check documentation at wiki page: https://github.com/Eyad-Hantouli/AnimeRate/wiki/Documentation
