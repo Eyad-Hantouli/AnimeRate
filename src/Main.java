@@ -2,7 +2,7 @@
 public class Main {
     public static void main(String[] args) {
         // Write to Log file -> PROGRAM
-        General.writeToLogFile(General.START_PROGRAM, "");
+        General.writeToLogFile(General.LOG_START_PROGRAM, "");
 
         // Create new program
         Program program = new Program(new LRUCache(General.LRU_CAPACITY));
@@ -11,6 +11,6 @@ public class Main {
         program.run();
 
         // Write to Log file -> PROGRAM
-        General.writeToLogFile(General.STOP_PROGRAM, "");
+        General.writeToLogFile(General.LOG_STOP_PROGRAM, "");
     }
 }

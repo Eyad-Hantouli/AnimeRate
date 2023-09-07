@@ -14,6 +14,9 @@ public class Program {
         while (true) {
             System.out.println("Enter an anime rate or name: ");
 
+            // Write to log file -> PROGRAM
+            General.writeToLogFile(General.LOG_MESSAGE, "Enter an anime rate or name: ");
+
             // Check user input if it's Anime rate or name
             if (scanner.hasNextFloat()) {
                 // Anime Rate
@@ -27,15 +30,25 @@ public class Program {
                 String query = scanner.nextLine();
 
                 // Stop program if input is the stop_word
-                if (General.normalize(query).equals(General.normalize(General.STOP_WORD)))
+                if (General.normalize(query).equals(General.normalize(General.STOP_WORD))) {
+
+                    // Write to log file -> USER
+                    General.writeToLogFile(General.LOG_ENTER_ANIME_NAME, General.STOP_WORD);
+
                     break;
+                }
 
                 float animeRate = getAnimeRateByName(query);
 
                 // Check if Anime doesn't exist
                 if (animeRate < 0) {
-                    System.out.println("There is no such anime, If you want to add this anime please enter its rate.\n" +
-                                        "Enter a floating number between (0 - 10): ");
+                    String message = "There is no such anime, If you want to add this anime please enter its rate.\n" +
+                            "Enter a floating number between (0 - 10): ";
+                    System.out.println(message);
+
+                    // Write to log file -> PROGRAM
+                    General.writeToLogFile(General.LOG_MESSAGE, "Enter a floating number between (0 - 10): ");
+
                     addNewAnime(query);
                 }
             }
@@ -45,7 +58,7 @@ public class Program {
 
     private void getAnimeByRate(Float userRate) {
         // Write to Log file -> USER
-        General.writeToLogFile(General.ENTER_ANIME_RATE, Float.toString(userRate));
+        General.writeToLogFile(General.LOG_ENTER_ANIME_RATE, Float.toString(userRate));
 
         // Open Anime txt file
         try (BufferedReader br = new BufferedReader(new FileReader(General.ANIME_FILE_PATH))) {
@@ -71,7 +84,7 @@ public class Program {
 
                 if (animeRate >= userRate) {
                     // Write to Log file -> PROGRAM
-                    General.writeToLogFile(General.PRINT_ANIME_NAME, animeName);
+                    General.writeToLogFile(General.LOG_PRINT_ANIME_NAME, animeName);
 
                     System.out.println(animeName);
                 }
@@ -83,7 +96,7 @@ public class Program {
             System.out.println(e.getMessage());
 
             // Write to Log file -> PROGRAM
-            General.writeToLogFile(General.PRINT_ERROR, e.getMessage());
+            General.writeToLogFile(General.LOG_PRINT_ERROR, e.getMessage());
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -92,7 +105,7 @@ public class Program {
 
     private float getAnimeRateByName(String query) {
         // Write to Log file -> USER
-        General.writeToLogFile(General.ENTER_ANIME_NAME, query);
+        General.writeToLogFile(General.LOG_ENTER_ANIME_NAME, query);
 
         // Apply standard naming rules on the query
         String processedQuery = General.normalize(query);
@@ -104,7 +117,7 @@ public class Program {
             System.out.println(anime.getRate());
 
             // Write to Log file -> PROGRAM
-            General.writeToLogFile(General.PRINT_ANIME_RATE, Float.toString(anime.getRate()));
+            General.writeToLogFile(General.LOG_PRINT_ANIME_RATE, Float.toString(anime.getRate()));
 
             return anime.getRate();
         }
@@ -137,7 +150,7 @@ public class Program {
                     System.out.println(animeName + ", " + animeRate);
 
                     // Write to Log file -> PROGRAM
-                    General.writeToLogFile(General.PRINT_ANIME_RATE, Float.toString(animeRate));
+                    General.writeToLogFile(General.LOG_PRINT_ANIME_RATE, Float.toString(animeRate));
 
                     return animeRate;
                 }
@@ -148,7 +161,8 @@ public class Program {
         }
 
         // Write to Log file -> PROGRAM
-        General.writeToLogFile(General.PRINT_ERROR, "There is no such anime, If you want to add this anime please enter its rate.");
+        General.writeToLogFile(General.LOG_MESSAGE, "There is no such anime, If you want to add this anime please enter its rate.");
+
         return -1f;
     }
 
@@ -160,7 +174,7 @@ public class Program {
                 scanner.nextLine(); // Consume the newline character
 
                 // Write to Log file -> USER
-                General.writeToLogFile(General.ENTER_ANIME_RATE, Float.toString(rate));
+                General.writeToLogFile(General.LOG_ENTER_ANIME_RATE, Float.toString(rate));
 
                 // Check if user input rate is a valid rate
                 General.checkRate(rate);
@@ -172,7 +186,7 @@ public class Program {
                 this.lruCache.put(name, rate);
 
                 // Write to Log file -> PROGRAM
-                General.writeToLogFile(General.ADD_NEW_ANIME, name + " | "+ rate);
+                General.writeToLogFile(General.LOG_ADD_NEW_ANIME, name + " | "+ rate);
 
                 System.out.println("New anime added successfully");
             }
@@ -181,14 +195,16 @@ public class Program {
                 String wrongInput = scanner.nextLine(); // Consume the invalid input
 
                 // Write to Log file -> USER
-                General.writeToLogFile(General.ENTER_ANIME_RATE, wrongInput);
+                General.writeToLogFile(General.LOG_ENTER_ANIME_RATE, wrongInput);
 
                 // Write to Log file -> PROGRAM
-                General.writeToLogFile(General.PRINT_ERROR, "Rate must be a float number between 0 and 10");
+                General.writeToLogFile(General.LOG_PRINT_ERROR, "Rate must be a float number between 0 and 10");
             }
         }
         catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
+
+            General.writeToLogFile(General.LOG_PRINT_ERROR, e.getMessage());
         }
     }
 

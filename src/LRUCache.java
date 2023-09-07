@@ -41,10 +41,10 @@ class LRUCache {
             System.out.println(value);
 
             // Write to Log file -> PROGRAM
-            General.writeToLogFile(General.PRINT_WARNING, warning);
+            General.writeToLogFile(General.LOG_PRINT_WARNING, warning);
 
             // Write to Log file -> USER
-            General.writeToLogFile(General.PRINT_ANIME_NAME, Float.toString(value));
+            General.writeToLogFile(General.LOG_PRINT_ANIME_NAME, Float.toString(value));
         }
     }
 }
