@@ -1,3 +1,6 @@
+import global.Constants;
+import global.TxtFile;
+
 import java.util.*;
 
 class LRUCache {
@@ -27,12 +30,12 @@ class LRUCache {
         if (cache.size() >= capacity) {
             // Remove the least recently requested Anime from the cache and linked list
             Anime lruAnime = linkedList.removeLast();
-            cache.remove(lruAnime.getNormalizedName());
+            cache.remove(lruAnime.getName());
         }
 
         try {
             Anime newAnime = new Anime(key, value);
-            cache.put(newAnime.getNormalizedName(), newAnime);
+            cache.put(newAnime.getName(), newAnime);
             linkedList.addFirst(newAnime);
         }
         catch (IllegalArgumentException e) {
@@ -41,10 +44,10 @@ class LRUCache {
             System.out.println(value);
 
             // Write to Log file -> PROGRAM
-            General.writeToLogFile(General.LOG_PRINT_WARNING, warning);
+            TxtFile.writeToLogFile(Constants.LOG_PRINT_WARNING, warning);
 
             // Write to Log file -> USER
-            General.writeToLogFile(General.LOG_PRINT_ANIME_NAME, Float.toString(value));
+            TxtFile.writeToLogFile(Constants.LOG_PRINT_ANIME_NAME, Float.toString(value));
         }
     }
 }

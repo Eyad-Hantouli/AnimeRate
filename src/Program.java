@@ -1,3 +1,6 @@
+import global.Constants;
+import global.TxtFile;
+
 import java.io.*;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -15,7 +18,7 @@ public class Program {
             System.out.println("Enter an anime rate or name: ");
 
             // Write to log file -> PROGRAM
-            General.writeToLogFile(General.LOG_MESSAGE, "Enter an anime rate or name: ");
+            TxtFile.writeToLogFile(Constants.LOG_MESSAGE, "Enter an anime rate or name: ");
 
             // Check user input if it's Anime rate or name
             if (scanner.hasNextFloat()) {
@@ -30,10 +33,10 @@ public class Program {
                 String query = scanner.nextLine();
 
                 // Stop program if input is the stop_word
-                if (General.normalize(query).equals(General.normalize(General.STOP_WORD))) {
+                if (Anime.normalizeName(query).equals(Anime.normalizeName(Constants.STOP_WORD))) {
 
                     // Write to log file -> USER
-                    General.writeToLogFile(General.LOG_ENTER_ANIME_NAME, General.STOP_WORD);
+                    TxtFile.writeToLogFile(Constants.LOG_ENTER_ANIME_NAME, Constants.STOP_WORD);
 
                     break;
                 }
@@ -47,7 +50,7 @@ public class Program {
                     System.out.println(message);
 
                     // Write to log file -> PROGRAM
-                    General.writeToLogFile(General.LOG_MESSAGE, "Enter a floating number between (0 - 10): ");
+                    TxtFile.writeToLogFile(Constants.LOG_MESSAGE, "Enter a floating number between (0 - 10): ");
 
                     addNewAnime(query);
                 }
@@ -58,12 +61,12 @@ public class Program {
 
     private void getAnimeByRate(Float userRate) {
         // Write to Log file -> USER
-        General.writeToLogFile(General.LOG_ENTER_ANIME_RATE, Float.toString(userRate));
+        TxtFile.writeToLogFile(Constants.LOG_ENTER_ANIME_RATE, Float.toString(userRate));
 
         // Open Anime txt file
-        try (BufferedReader br = new BufferedReader(new FileReader(General.ANIME_FILE_PATH))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Constants.ANIME_FILE_PATH))) {
             // Check if rate is valid
-            General.checkRate(userRate);
+            Anime.checkRate(userRate);
 
             String line;
             String[] lineSplit;
@@ -84,7 +87,7 @@ public class Program {
 
                 if (animeRate >= userRate) {
                     // Write to Log file -> PROGRAM
-                    General.writeToLogFile(General.LOG_PRINT_ANIME_NAME, animeName);
+                    TxtFile.writeToLogFile(Constants.LOG_PRINT_ANIME_NAME, animeName);
 
                     System.out.println(animeName);
                 }
@@ -96,7 +99,7 @@ public class Program {
             System.out.println(e.getMessage());
 
             // Write to Log file -> PROGRAM
-            General.writeToLogFile(General.LOG_PRINT_ERROR, e.getMessage());
+            TxtFile.writeToLogFile(Constants.LOG_PRINT_ERROR, e.getMessage());
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -105,10 +108,10 @@ public class Program {
 
     private float getAnimeRateByName(String query) {
         // Write to Log file -> USER
-        General.writeToLogFile(General.LOG_ENTER_ANIME_NAME, query);
+        TxtFile.writeToLogFile(Constants.LOG_ENTER_ANIME_NAME, query);
 
         // Apply standard naming rules on the query
-        String processedQuery = General.normalize(query);
+        String processedQuery = Anime.normalizeName(query);
 
         // Search for Anime in the cache
         if (lruCache.get(processedQuery) != null) {
@@ -117,14 +120,14 @@ public class Program {
             System.out.println(anime.getRate());
 
             // Write to Log file -> PROGRAM
-            General.writeToLogFile(General.LOG_PRINT_ANIME_RATE, Float.toString(anime.getRate()));
+            TxtFile.writeToLogFile(Constants.LOG_PRINT_ANIME_RATE, Float.toString(anime.getRate()));
 
             return anime.getRate();
         }
 
         // Open Anime txt file
         // Search for Anime in the txt file
-        try (BufferedReader br = new BufferedReader(new FileReader(General.ANIME_FILE_PATH))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Constants.ANIME_FILE_PATH))) {
             String line;
             String[] lineSplit;
             String animeName;
@@ -142,15 +145,15 @@ public class Program {
                 // 2nd part is the Anime Rate
                 animeRate = Float.parseFloat(lineSplit[lineSplit.length - 1]);
 
-                if (General.normalize(animeName).equals(processedQuery)) {
+                if (Anime.normalizeName(animeName).equals(processedQuery)) {
                     // Add anime to the cache
                     this.lruCache.put(animeName, animeRate);
 
                     // Print Anime
-                    System.out.println(animeName + ", " + animeRate);
+                    System.out.println(animeRate);
 
                     // Write to Log file -> PROGRAM
-                    General.writeToLogFile(General.LOG_PRINT_ANIME_RATE, Float.toString(animeRate));
+                    TxtFile.writeToLogFile(Constants.LOG_PRINT_ANIME_RATE, Float.toString(animeRate));
 
                     return animeRate;
                 }
@@ -161,7 +164,7 @@ public class Program {
         }
 
         // Write to Log file -> PROGRAM
-        General.writeToLogFile(General.LOG_MESSAGE, "There is no such anime, If you want to add this anime please enter its rate.");
+        TxtFile.writeToLogFile(Constants.LOG_MESSAGE, "There is no such anime, If you want to add this anime please enter its rate.");
 
         return -1f;
     }
@@ -174,19 +177,19 @@ public class Program {
                 scanner.nextLine(); // Consume the newline character
 
                 // Write to Log file -> USER
-                General.writeToLogFile(General.LOG_ENTER_ANIME_RATE, Float.toString(rate));
+                TxtFile.writeToLogFile(Constants.LOG_ENTER_ANIME_RATE, Float.toString(rate));
 
                 // Check if user input rate is a valid rate
-                General.checkRate(rate);
+                Anime.checkRate(rate);
 
                 // Add new anime to anime txt file
-                General.writeToAnimeFile(name + " " + rate);
+                TxtFile.writeToAnimeFile(name + " " + rate);
 
                 // Add anime to the cache
                 this.lruCache.put(name, rate);
 
                 // Write to Log file -> PROGRAM
-                General.writeToLogFile(General.LOG_ADD_NEW_ANIME, name + " | "+ rate);
+                TxtFile.writeToLogFile(Constants.LOG_ADD_NEW_ANIME, name + " | "+ rate);
 
                 System.out.println("New anime added successfully");
             }
@@ -195,16 +198,16 @@ public class Program {
                 String wrongInput = scanner.nextLine(); // Consume the invalid input
 
                 // Write to Log file -> USER
-                General.writeToLogFile(General.LOG_ENTER_ANIME_RATE, wrongInput);
+                TxtFile.writeToLogFile(Constants.LOG_ENTER_ANIME_RATE, wrongInput);
 
                 // Write to Log file -> PROGRAM
-                General.writeToLogFile(General.LOG_PRINT_ERROR, "Rate must be a float number between 0 and 10");
+                TxtFile.writeToLogFile(Constants.LOG_PRINT_ERROR, "Rate must be a float number between 0 and 10");
             }
         }
         catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
 
-            General.writeToLogFile(General.LOG_PRINT_ERROR, e.getMessage());
+            TxtFile.writeToLogFile(Constants.LOG_PRINT_ERROR, e.getMessage());
         }
     }
 
